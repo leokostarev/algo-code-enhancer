@@ -1,4 +1,7 @@
 # Algocode Enhancer
 
- An extension that makes all kinds of improvements to the algocode.ru & ejudge.algocode.ru
- 
+An extension that improves the user experience of algocode.ru & ejudge.algocode.ru
+
+## Copy Sample Button
+Allows copying the sample code to the clipboard
+![copy-sample-button]()
