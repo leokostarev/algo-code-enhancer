@@ -62,4 +62,3 @@ function AlgoSendClicked() {
         ALGO_CODE_SEND_BUTTON.click();
     });
 }
-
