@@ -1,21 +1,26 @@
+let ALGO_STANDINGS_FIXED = null;
 let ALGO_STANDINGS = null;
 
 (async function () {
-    while (ALGO_STANDINGS === null || ALGO_STANDINGS.children.length === 0) {
+    while (ALGO_STANDINGS === null || ALGO_STANDINGS.children.length === 0 ||
+    ALGO_STANDINGS_FIXED === null || ALGO_STANDINGS_FIXED.children.length === 0) {
         await new Promise(resolve => setTimeout(resolve, 500));
-        ALGO_STANDINGS = document.getElementById("standings_fixed");
+        ALGO_STANDINGS_FIXED = document.getElementById("standings_fixed");
+        ALGO_STANDINGS = document.getElementById("standings");
+        console.log("aaa");
     }
-    let penalty = ALGO_STANDINGS.children[0].children[0].children[4];
+    let penalty = ALGO_STANDINGS_FIXED.children[0].children[0].children[4];
 
     penalty.style.color = "blue";
     penalty.style.fontWeight = "bold";
-    penalty.onclick = AlgoPenaltySort;
+    penalty.onclick = () => {
+        AlgoPenaltySort(ALGO_STANDINGS_FIXED.children[0]);
+        AlgoPenaltySort(ALGO_STANDINGS.children[1]);
+    };
 })();
 
 
-function AlgoPenaltySort() {
-    let table_body = ALGO_STANDINGS.children[0];
-
+function AlgoPenaltySort(table_body) {
     // выбираем все строки с данными
     /** @type {HTMLTableRowElement[]} */
     let data_rows = [];

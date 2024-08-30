@@ -9,6 +9,7 @@ let ALGO_CODE_SEND_BUTTON = {};
     let button_style = `
     <style>
         .copy-code-button {
+            cursor: pointer;
             width: auto;
             height: auto;
             padding: 10px 15px;
@@ -17,13 +18,17 @@ let ALGO_CODE_SEND_BUTTON = {};
             border-radius: 5px;
             font-size: 1.2em;
             margin-bottom: 5px;
-            box-shadow: 3px 3px;
+            box-shadow: 1px 1px;
             transition: all 0.1s ease-out;
         }
 
         .copy-code-button:active {
             box-shadow: none;
-            transform: translate(3px, 3px);
+            transform: translate(1px, 1px);
+        }
+        
+        .copy-code-button:hover {
+            background-color: rgba(0.5, 0.5, 0.5, 0.02);
         }
     </style>`;
     document.head.insertAdjacentHTML("beforeend", button_style);
