@@ -9,7 +9,7 @@
     "default_title": "Algocode Enhancer",
     "default_popup": "popup.html"
   },
-  "description": "An extension that improves the user experience of algocode.ru & ejudge.algocode.ru.\nButtons to copy testcases, paste and send the solution, sort standings by penalty.\nAnalyze standings and count successful submissions for every task. ",
+  "description": "Enhance algocode with new features",
   "icons": {
     "48": "48.png",
     "128": "128.png"
