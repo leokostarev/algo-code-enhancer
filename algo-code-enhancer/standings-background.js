@@ -48,8 +48,7 @@ let ALGO_STANDINGS = null;
             let row = table_body.children[ri];
 
             for (let ci = 0; ci < task_count; ci++) {
-                let s = row.children[ci + 5].innerHTML;
-                if (s.length !== 0 && s[0] === "+") {
+                if (row.children[ci + 5].classList.contains("ok")) {
                     counter[ci]++;
                 }
             }

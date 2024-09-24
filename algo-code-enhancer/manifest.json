@@ -9,7 +9,7 @@
     "default_title": "Algocode Enhancer",
     "default_popup": "popup.html"
   },
-  "description": "By RedON. Любые вопросы tg @leonid_kostarev",
+  "description": "An extension that improves the user experience of algocode.ru & ejudge.algocode.ru.\nButtons to copy testcases, paste and send the solution, sort standings by penalty.\nAnalyze standings and count successful submissions for every task. ",
   "icons": {
     "48": "48.png",
     "128": "128.png"
