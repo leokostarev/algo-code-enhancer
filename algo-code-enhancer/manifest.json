@@ -15,6 +15,11 @@
     "128": "128.png"
   },
   "author": "RedON",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "algocode-enhancer@extension.ru"
+    }
+  },
   "content_scripts": [
     {
       "matches": [
