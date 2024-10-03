@@ -1,7 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "Algocode Enhancer",
   "version": "1.2.0",
+  "name": "Algocode Enhancer",
+  "description": "Enhance algocode with new features",
+  "author": "RedON",
+  "permissions": [
+    "clipboardRead",
+    "clipboardWrite",
+    "storage"
+  ],
   "action": {
     "default_icon": {
       "128": "128.png"
@@ -9,12 +16,13 @@
     "default_title": "Algocode Enhancer",
     "default_popup": "popup.html"
   },
-  "description": "Enhance algocode with new features",
+  "background": {
+    "service_worker": "background.js"
+  },
   "icons": {
     "48": "48.png",
     "128": "128.png"
   },
-  "author": "RedON",
   "browser_specific_settings": {
     "gecko": {
       "id": "algocode-enhancer@extension.ru"
@@ -28,8 +36,10 @@
       "js": [
         "ejudge-background.js"
       ],
-      "run_at": "document_end",
-      "world": "MAIN"
+      "css": [
+        "ejudge-background.css"
+      ],
+      "run_at": "document_end"
     },
     {
       "matches": [
@@ -38,8 +48,7 @@
       "js": [
         "standings-background.js"
       ],
-      "run_at": "document_end",
-      "world": "MAIN"
+      "run_at": "document_end"
     }
   ]
 }

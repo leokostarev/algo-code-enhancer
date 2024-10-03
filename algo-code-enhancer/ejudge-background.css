@@ -1,0 +1,22 @@
+.big-chungus-button {
+    cursor: pointer;
+    width: auto;
+    height: auto;
+    padding: 10px 15px;
+    background-color: transparent;
+    border-width: 2px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    margin-bottom: 5px;
+    box-shadow: 1px 1px;
+    transition: all 0.1s ease-out;
+}
+
+.big-chungus-button:active {
+    box-shadow: none;
+    transform: translate(1px, 1px);
+}
+
+.big-chungus-button:hover {
+    background-color: rgba(0.5, 0.5, 0.5, 0.02);
+}

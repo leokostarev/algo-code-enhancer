@@ -1,64 +1,65 @@
-let ALGO_CODE_FRAGMENTS = {};
-let ALGO_CODE_INPUT = {};
-let ALGO_CODE_SEND_BUTTON = {};
+{
+    // перезагружаем страницу, если надо
 
+    const submit_tab = document.getElementById("ej-main-submit-tab");
+    if (submit_tab.children.length >= 4) {
 
-(function () {
-    // стили для кнопок
+        const submission_rows = submit_tab.children[3].tBodies[0].rows;
+        if (submission_rows.length > 1) {
 
-    let button_style = `
-    <style>
-        .copy-code-button {
-            cursor: pointer;
-            width: auto;
-            height: auto;
-            padding: 10px 15px;
-            background-color: transparent;
-            border-width: 2px;
-            border-radius: 5px;
-            font-size: 1.2em;
-            margin-bottom: 5px;
-            box-shadow: 1px 1px;
-            transition: all 0.1s ease-out;
+            const result = submission_rows[1].cells[5].textContent;
+            if (result === "Компилируется..." || result === "Выполняется...") {
+
+                chrome.runtime
+                    .sendMessage({action: "get_refresh"})
+                    .then(response => {
+                        if (response.refresh) {
+                            return chrome.runtime.sendMessage({action: "get_refresh_time"});
+                        }
+                    })
+                    .then(response => {
+                        return setTimeout(() => {
+                            chrome.runtime.sendMessage({action: "reload"});
+                        }, response.refresh_time);
+                    });
+            }
         }
-
-        .copy-code-button:active {
-            box-shadow: none;
-            transform: translate(1px, 1px);
-        }
-        
-        .copy-code-button:hover {
-            background-color: rgba(0.5, 0.5, 0.5, 0.02);
-        }
-    </style>`;
-    document.head.insertAdjacentHTML("beforeend", button_style);
-
-    // находим все куски кода
-    ALGO_CODE_FRAGMENTS = document.getElementsByTagName("pre");
-    for (let i = 0; i < ALGO_CODE_FRAGMENTS.length; i++) {
-        // к каждому куску кода приписываю кнопку
-        const code = `<button class="copy-code-button" type = "button"
-                              onclick="AlgoCopyClicked(${i});">Скопировать</button>`;
-        ALGO_CODE_FRAGMENTS[i].insertAdjacentHTML("beforebegin", code);
     }
-
-    // получаю окно для ввода кода и кнопку
-    ALGO_CODE_INPUT = document.getElementsByName("text_form")[0];
-    ALGO_CODE_SEND_BUTTON = document.getElementsByName("action_40")[0];
-    if (ALGO_CODE_INPUT !== undefined && ALGO_CODE_SEND_BUTTON !== undefined) {
-        const code = `<button class="copy-code-button" type="button" 
-                                       onclick="AlgoSendClicked();">Вставить из буфера и отправить</button>`;
-        ALGO_CODE_INPUT.parentElement.parentElement.insertAdjacentHTML("beforebegin", code);
-    }
-})();
-
-function AlgoCopyClicked(elem) {
-    navigator.clipboard.writeText(ALGO_CODE_FRAGMENTS[elem].innerText);
 }
 
-function AlgoSendClicked() {
+// находим все куски кода
+let codeFragments = document.getElementsByTagName("pre");
+for (let i = 0; i < codeFragments.length; i++) {
+    // к каждому куску кода приписываю кнопку
+    const button = document.createElement("button");
+    button.classList.add("big-chungus-button");
+    button.type = "button";
+    button.onclick = () => copyCodeFragment(i);
+    button.textContent = "Скопировать";
+    codeFragments[i].insertAdjacentElement("beforebegin", button);
+}
+
+// получаю окно для ввода кода и кнопку отправки
+let submissionInput = document.getElementsByName("text_form")[0];
+let submitButton = document.getElementsByName("action_40")[0];
+if (submissionInput !== undefined && submitButton !== undefined) {
+    const button = document.createElement("button");
+    button.classList.add("big-chungus-button");
+    button.type = "button";
+    button.onclick = submitSolution;
+    button.textContent = "Вставить из буфера и отправить";
+
+    submissionInput.parentElement.parentElement.insertAdjacentElement("beforebegin", button);
+}
+
+
+function copyCodeFragment(elem) {
+    navigator.clipboard.writeText(codeFragments[elem].innerText);
+}
+
+function submitSolution() {
     navigator.clipboard.readText().then(text => {
-        ALGO_CODE_INPUT.value = text;
-        ALGO_CODE_SEND_BUTTON.click();
+        submissionInput.value = text;
+        submitButton.click();
     });
 }

@@ -4,21 +4,34 @@
     <meta charset="UTF-8">
     <title>Algocode Enhancer</title>
     <style>
-        div {
-            width: 300px;
-            height: 110px;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 20px;
-            margin: auto;
+        body {
+            width: max-content;
+            height: max-content;
+            padding: 3px;
+            font-size: 1rem;
         }
     </style>
 </head>
 <body>
     <div>
-        By RedON<br>
-        По любым вопросам и предложениям <br> tg: @leonid_kostarev
+        <h3> Algocode Enhancer </h3>
+        <label>
+            Обновлять страницу, пока решение проверяется
+            <input id="refresh" type="checkbox">
+        </label> <br>
+
+        <label>
+            Период обновления
+            <input id="refresh_time" type="number">
+            мс
+        </label> <br><br>
+
+        <footer>
+            По любым вопросам и предложениям <br>
+            tg: @leonid_kostarev
+        </footer>
     </div>
+
+    <script src="popup.js"></script>
 </body>
 </html>
