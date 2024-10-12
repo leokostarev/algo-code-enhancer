@@ -10,6 +10,11 @@
             padding: 3px;
             font-size: 1rem;
         }
+
+        textarea {
+            width: 90%;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
@@ -18,21 +23,20 @@
         <label>
             Обновлять страницу, пока решение проверяется
             <input id="refresh" type="checkbox">
-        </label> <br>
-
+            <br>
+        </label>
         <label>
             Период обновления
             <input id="refresh_time" type="number">
-            мс
-        </label> <br> <br>
-
+            мс <br>
+        </label>
+        <br>
         <label>
             Имена в контестах(для подсветки таблицы) <br>
-
+            Можно несколько через перенос строки <br>
             <textarea id="names"></textarea>
         </label>
-
-
+        <br>
         <footer>
             По любым вопросам и предложениям <br>
             tg: @leonid_kostarev
