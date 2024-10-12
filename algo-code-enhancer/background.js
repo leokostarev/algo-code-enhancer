@@ -6,8 +6,8 @@ function getOrDefault(key, defaultValue, sendResponse) {
     chrome.storage.local.get({[key]: defaultValue}).then(sendResponse);
 }
 
-function set(key, value) {
-    chrome.storage.local.set({[key]: value}).then(() => 0);
+async function set(key, value) {
+    await chrome.storage.local.set({[key]: value});
 }
 
 chrome.runtime.onMessage.addListener(
