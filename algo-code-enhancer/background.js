@@ -29,6 +29,14 @@ chrome.runtime.onMessage.addListener(
                 set("refresh_time", request.refresh_time);
                 return true;
 
+            case "get_names":
+                getOrDefault("names", "", sendResponse);
+                return true;
+
+            case "set_names":
+                set("names", request.names);
+                return true;
+
             case "reload":
                 try {
                     chrome.tabs.reload(sender.tab.id);

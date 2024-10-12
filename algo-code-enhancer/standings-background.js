@@ -23,55 +23,55 @@ function getNumOfInfoRows(standingsFixed) {
     return standingsFixed.tBodies[0].rows[0].cells.length - 1;
 }
 
-function enhanceFixedStandings(num_of_info_rows, standingsFixed) {
+function enhanceFixedStandings(numOfInfoRows, standingsFixed) {
     // настраиваем таблицу для боковой панели
-    const table_body = standingsFixed.tBodies[0];
+    const tableBody = standingsFixed.tBodies[0];
 
-    const head_row = table_body.rows[0];
-    const space_row = table_body.rows[1];
+    const headRow = tableBody.rows[0];
+    const spaceRow = tableBody.rows[1];
 
-    space_row.insertAdjacentElement("afterend", space_row.cloneNode(true));
+    spaceRow.insertAdjacentElement("afterend", spaceRow.cloneNode(true));
 
-    for (let i = 0; i < num_of_info_rows; i++) {
-        head_row.cells[i].rowSpan = 3;
+    for (let i = 0; i < numOfInfoRows; i++) {
+        headRow.cells[i].rowSpan = 3;
     }
 }
 
-function enhanceStandings(num_of_info_rows, standings) {
+function enhanceStandings(numOfInfoRows, standings) {
     // настраиваем таблицу для основной части
-    const table_body = standings.tBodies[0];
-    const table_head = standings.tHead;
+    const tableBody = standings.tBodies[0];
+    const tableHead = standings.tHead;
 
-    const head_row = table_body.rows[0];
-    const head_head_row = table_head.rows[0];
-    for (let i = 0; i < num_of_info_rows; i++) {
-        head_row.cells[i].rowSpan = 3;
-        head_head_row.cells[i].rowSpan = 3;
+    const headRow = tableBody.rows[0];
+    const headHeadRow = tableHead.rows[0];
+    for (let i = 0; i < numOfInfoRows; i++) {
+        headRow.cells[i].rowSpan = 3;
+        headHeadRow.cells[i].rowSpan = 3;
     }
 
-    const task_row = table_body.rows[1];
-    const head_task_row = table_head.rows[1];
+    const taskRow = tableBody.rows[1];
+    const headTaskRow = tableHead.rows[1];
 
-    const num_of_tasks = task_row.cells.length - 1;
+    const numOfTasks = taskRow.cells.length - 1;
     // подсчитаем количество успешных решений
-    const counter = Array(num_of_tasks).fill(0);
-    for (let row_i = 3; row_i < table_body.rows.length - 1; row_i++) {
-        const row = table_body.rows[row_i];
+    const counter = Array(numOfTasks).fill(0);
+    for (let row_i = 3; row_i < tableBody.rows.length - 1; row_i++) {
+        const row = tableBody.rows[row_i];
 
-        for (let column_i = 0; column_i < num_of_tasks; column_i++) {
-            if (row.cells[column_i + num_of_info_rows].classList.contains("ok")) {
+        for (let column_i = 0; column_i < numOfTasks; column_i++) {
+            if (row.cells[column_i + numOfInfoRows].classList.contains("ok")) {
                 counter[column_i]++;
             }
         }
     }
-    task_row.insertAdjacentElement("afterend", task_row.cloneNode(true));
-    head_task_row.insertAdjacentElement("afterend", head_task_row.cloneNode(true));
-    populateCountRow(table_body.rows[2]);
-    populateCountRow(table_head.rows[2]);
+    taskRow.insertAdjacentElement("afterend", taskRow.cloneNode(true));
+    headTaskRow.insertAdjacentElement("afterend", headTaskRow.cloneNode(true));
+    populateCountRow(tableBody.rows[2]);
+    populateCountRow(tableHead.rows[2]);
 
     function populateCountRow(row) {
         // вводим данные в таблицу
-        for (let column_i = 0; column_i < num_of_tasks; column_i++) {
+        for (let column_i = 0; column_i < numOfTasks; column_i++) {
             if (row.cells[column_i].textContent === "Σ")
                 continue;
             row.cells[column_i].textContent = counter[column_i];
@@ -83,68 +83,100 @@ function enhanceStandings(num_of_info_rows, standings) {
 
 function configureSortButtons(standingsFixed, standings) {
     // получаем и настраиваем кнопку, добавляю реакцию на клик в конце, чтобы не нарушить работу моего кода
-    const score_button = standingsFixed.tBodies[0].rows[0].cells[3];
-    const penalty_button = standingsFixed.tBodies[0].rows[0].cells[4];
+    const scoreButton = standingsFixed.tBodies[0].rows[0].cells[3];
+    const penaltyButton = standingsFixed.tBodies[0].rows[0].cells[4];
 
-    const default_color = score_button.style.color;
-    const default_weight = score_button.style.fontWeight;
-    const new_color = "blue";
-    const new_weight = "bold";
+    const defaultColor = scoreButton.style.color;
+    const defaultWeight = scoreButton.style.fontWeight;
+    const newColor = "blue";
+    const newWeight = "bold";
 
-    const sort_by_score = (a, b) =>
+    const sortByScore = (a, b) =>
         (Number(b.cells[3].textContent) - Number(a.cells[3].textContent)) * 100000 +
         (Number(a.cells[4].textContent) - Number(b.cells[4].textContent));
 
-    const sort_by_penalty = (a, b) =>
+    const sortByPenalty = (a, b) =>
         (Number(b.cells[4].textContent) - Number(a.cells[4].textContent)) * 100000 +
         (Number(b.cells[3].textContent) - Number(a.cells[3].textContent));
 
-    function activate_button(b) {
-        b.style.color = new_color;
-        b.style.fontWeight = new_weight;
+    function activateButton(b) {
+        b.style.color = newColor;
+        b.style.fontWeight = newWeight;
     }
 
-    function deactivate_button(b) {
-        b.style.color = default_color;
-        b.style.fontWeight = default_weight;
+    function deactivateButton(b) {
+        b.style.color = defaultColor;
+        b.style.fontWeight = defaultWeight;
     }
 
-    activate_button(penalty_button);
+    activateButton(penaltyButton);
 
-    score_button.onclick = () => {
-        sortStandingsBy(standingsFixed.tBodies[0], sort_by_score);
-        sortStandingsBy(standings.tBodies[0], sort_by_score);
-        deactivate_button(score_button);
-        activate_button(penalty_button);
+    scoreButton.onclick = () => {
+        sortStandingsBy(standingsFixed.tBodies[0], sortByScore);
+        sortStandingsBy(standings.tBodies[0], sortByScore);
+        deactivateButton(scoreButton);
+        activateButton(penaltyButton);
     };
-    penalty_button.onclick = () => {
-        sortStandingsBy(standingsFixed.tBodies[0], sort_by_penalty);
-        sortStandingsBy(standings.tBodies[0], sort_by_penalty);
-        activate_button(score_button);
-        deactivate_button(penalty_button);
+    penaltyButton.onclick = () => {
+        sortStandingsBy(standingsFixed.tBodies[0], sortByPenalty);
+        sortStandingsBy(standings.tBodies[0], sortByPenalty);
+        activateButton(scoreButton);
+        deactivateButton(penaltyButton);
     };
 }
 
-/** @param {HTMLTableSectionElement} table_body
- * @param { (a: HTMLTableRowElement, b: HTMLTableRowElement) => number} compare_function */
-function sortStandingsBy(table_body, compare_function) {
+/** @param {HTMLTableSectionElement} tableBody
+ * @param { (a: HTMLTableRowElement, b: HTMLTableRowElement) => number} compareFunction */
+function sortStandingsBy(tableBody, compareFunction) {
     // выбираем все строки с данными
     /** @type {HTMLTableRowElement[]} */
-    const data_rows = Array.from(table_body.rows).slice(3);
+    const dataRows = Array.from(tableBody.rows).slice(3);
 
     // удаляем их из таблицы
-    data_rows.forEach(x => table_body.removeChild(x));
+    dataRows.forEach(x => tableBody.removeChild(x));
 
     // сортируем данные
-    data_rows.sort(compare_function);
+    dataRows.sort(compareFunction);
 
     // добавляем отсортированные строки обратно в таблицу
-    data_rows.forEach(x => table_body.appendChild(x));
+    dataRows.forEach(x => tableBody.appendChild(x));
+}
+
+function HighlightUserRow(standings, userNames) {
+    const rows = standings.tBodies[0].rows;
+
+    for (const row of rows) {
+        if (row.cells.length > 2 && userNames.includes(row.cells[2].textContent)) {
+            row.classList.add("current-user-row");
+            return row;
+        }
+    }
+}
+
+function colorTasks(standings, userRow, numOfInfoRows) {
+    let taskRow = standings.tBodies[0].rows[1];
+    let taskRow2 = standings.tHead.rows[1];
+    let numOfTasks = taskRow.cells.length;
+
+    for (let i = 0; i < numOfTasks; i++) {
+        let style = userRow.cells[i + numOfInfoRows].classList[0];
+
+        taskRow.cells[i].classList.remove("gray");
+        taskRow.cells[i].classList.add(style);
+        taskRow2.cells[i].classList.remove("gray");
+        taskRow2.cells[i].classList.add(style);
+    }
 }
 
 waitForStandingsToLoad().then(([standingsFixed, standings]) => {
-    let num_of_info_rows = getNumOfInfoRows(standingsFixed);
-    enhanceFixedStandings(num_of_info_rows, standingsFixed);
-    enhanceStandings(num_of_info_rows, standings);
+    let numOfInfoRows = getNumOfInfoRows(standingsFixed);
+    enhanceFixedStandings(numOfInfoRows, standingsFixed);
+    enhanceStandings(numOfInfoRows, standings);
     configureSortButtons(standingsFixed, standings);
+
+    chrome.runtime.sendMessage({"action": "get_names"}).then((response) => {
+        let userRow = HighlightUserRow(standings, response.names);
+        HighlightUserRow(standingsFixed, response.names);
+        colorTasks(standings, userRow, numOfInfoRows);
+    });
 });

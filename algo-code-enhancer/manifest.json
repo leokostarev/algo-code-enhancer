@@ -48,6 +48,9 @@
       "js": [
         "standings-background.js"
       ],
+      "css": [
+        "standings-background.css"
+      ],
       "run_at": "document_end"
     }
   ]
