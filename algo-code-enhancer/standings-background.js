@@ -1,3 +1,6 @@
+/**
+ *  @return {Promise<[HTMLElement, HTMLElement]>}
+ */
 async function waitForStandingsToLoad() {
     async function waitIfNotLoaded(el) {
         if (el === null || el.children.length === 0) {
@@ -19,10 +22,20 @@ async function waitForStandingsToLoad() {
     return [standingsFixed, standings];
 }
 
+
+/**
+ * @param {HTMLTableElement} standingsFixed
+ * @returns {number}
+ */
 function getNumOfInfoRows(standingsFixed) {
     return standingsFixed.tBodies[0].rows[0].cells.length - 1;
 }
 
+
+/**
+ * @param {number} numOfInfoRows
+ * @param {HTMLTableElement} standingsFixed
+ */
 function enhanceFixedStandings(numOfInfoRows, standingsFixed) {
     // настраиваем таблицу для боковой панели
     const tableBody = standingsFixed.tBodies[0];
@@ -37,6 +50,11 @@ function enhanceFixedStandings(numOfInfoRows, standingsFixed) {
     }
 }
 
+
+/**
+ * @param {number} numOfInfoRows
+ * @param {HTMLTableElement} standings
+ */
 function enhanceStandings(numOfInfoRows, standings) {
     // настраиваем таблицу для основной части
     const tableBody = standings.tBodies[0];
@@ -55,7 +73,7 @@ function enhanceStandings(numOfInfoRows, standings) {
     const numOfTasks = taskRow.cells.length - 1;
     // подсчитаем количество успешных решений
     const counter = Array(numOfTasks).fill(0);
-    for (let row_i = 3; row_i < tableBody.rows.length - 1; row_i++) {
+    for (let row_i = 2; row_i < tableBody.rows.length - 1; row_i++) {
         const row = tableBody.rows[row_i];
 
         for (let column_i = 0; column_i < numOfTasks; column_i++) {
@@ -81,8 +99,12 @@ function enhanceStandings(numOfInfoRows, standings) {
     }
 }
 
+
+/**
+ * @param {HTMLTableElement} standingsFixed
+ * @param {HTMLTableElement} standings
+ */
 function configureSortButtons(standingsFixed, standings) {
-    // получаем и настраиваем кнопку, добавляю реакцию на клик в конце, чтобы не нарушить работу моего кода
     const scoreButton = standingsFixed.tBodies[0].rows[0].cells[3];
     const penaltyButton = standingsFixed.tBodies[0].rows[0].cells[4];
 
@@ -129,7 +151,6 @@ function configureSortButtons(standingsFixed, standings) {
  * @param { (a: HTMLTableRowElement, b: HTMLTableRowElement) => number} compareFunction */
 function sortStandingsBy(tableBody, compareFunction) {
     // выбираем все строки с данными
-    /** @type {HTMLTableRowElement[]} */
     const dataRows = Array.from(tableBody.rows).slice(3);
 
     // удаляем их из таблицы
@@ -142,24 +163,33 @@ function sortStandingsBy(tableBody, compareFunction) {
     dataRows.forEach(x => tableBody.appendChild(x));
 }
 
-function HighlightUserRow(standings, userNames) {
+/** @param {HTMLTableElement} standings
+ * @param {string} names
+ * @returns {HTMLTableRowElement[]} */
+function getMatchingRows(standings, names) {
     const rows = standings.tBodies[0].rows;
-
+    const matchingRows = [];
     for (const row of rows) {
-        if (row.cells.length > 2 && userNames.includes(row.cells[2].textContent)) {
-            row.classList.add("current-user-row");
-            return row;
+        if (row.cells.length > 2 && names.includes(row.cells[2].textContent)) {
+            matchingRows.push(row);
         }
     }
+    return matchingRows;
 }
 
-function colorTasks(standings, userRow, numOfInfoRows) {
-    let taskRow = standings.tBodies[0].rows[1];
-    let taskRow2 = standings.tHead.rows[1];
-    let numOfTasks = taskRow.cells.length;
+function highlightRows(matchedRows) {
+    matchedRows.forEach(
+        row => row.classList.add("highlight-row"),
+    );
+}
+
+function colorTasks(numOfInfoRows, standings, userRow) {
+    const taskRow = standings.tBodies[0].rows[1];
+    const taskRow2 = standings.tHead.rows[1];
+    const numOfTasks = taskRow.cells.length;
 
     for (let i = 0; i < numOfTasks; i++) {
-        let style = userRow.cells[i + numOfInfoRows].classList[0];
+        const style = userRow.cells[i + numOfInfoRows].classList[0];
 
         taskRow.cells[i].classList.remove("gray");
         taskRow.cells[i].classList.add(style);
@@ -168,15 +198,28 @@ function colorTasks(standings, userRow, numOfInfoRows) {
     }
 }
 
-waitForStandingsToLoad().then(([standingsFixed, standings]) => {
-    let numOfInfoRows = getNumOfInfoRows(standingsFixed);
+async function main() {
+    const [standingsFixed, standings] = await waitForStandingsToLoad();
+
+    const numOfInfoRows = getNumOfInfoRows(standingsFixed);
     enhanceFixedStandings(numOfInfoRows, standingsFixed);
     enhanceStandings(numOfInfoRows, standings);
-    configureSortButtons(standingsFixed, standings);
+    const response = await chrome.runtime.sendMessage({action: "get"});
 
-    chrome.runtime.sendMessage({"action": "get_names"}).then((response) => {
-        let userRow = HighlightUserRow(standings, response.names);
-        HighlightUserRow(standingsFixed, response.names);
-        colorTasks(standings, userRow, numOfInfoRows);
-    });
-});
+    const userRow = getMatchingRows(standings, response.names);
+    const userRowFixed = getMatchingRows(standingsFixed, response.names);
+    const friendsRows = getMatchingRows(standings, response.friends);
+    const friendsRowsFixed = getMatchingRows(standingsFixed, response.friends);
+    highlightRows([...new Set([
+        ...userRow, ...friendsRows,
+        ...userRowFixed, ...friendsRowsFixed,
+    ])]); // holy hell
+    if (userRow.length > 0) {
+        colorTasks(numOfInfoRows, standings, userRow[0]);
+    }
+
+    // добавляю сортировку в конце, чтобы логику нельзя было сломать
+    configureSortButtons(standingsFixed, standings);
+}
+
+main();

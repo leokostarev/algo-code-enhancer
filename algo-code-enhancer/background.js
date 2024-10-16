@@ -1,40 +1,19 @@
-const DEFAULT_REFRESH = false;
-const DEFAULT_REFRESH_TIME = 200;
-
-
-function getOrDefault(key, defaultValue, sendResponse) {
-    chrome.storage.local.get({[key]: defaultValue}).then(sendResponse);
-}
-
-async function set(key, value) {
-    await chrome.storage.local.set({[key]: value});
-}
+const FIELDS = {
+    refresh:      false,
+    refresh_time: 200,
+    names:        "",
+    friends:      "",
+};
 
 chrome.runtime.onMessage.addListener(
     (request, sender, sendResponse) => {
         switch (request.action) {
-            case "get_refresh":
-                getOrDefault("refresh", DEFAULT_REFRESH, sendResponse);
+            case "get":
+                chrome.storage.local.get(FIELDS).then(sendResponse);
                 return true;
 
-            case "set_refresh":
-                set("refresh", request.refresh);
-                return true;
-
-            case "get_refresh_time":
-                getOrDefault("refresh_time", DEFAULT_REFRESH_TIME, sendResponse);
-                return true;
-
-            case "set_refresh_time":
-                set("refresh_time", request.refresh_time);
-                return true;
-
-            case "get_names":
-                getOrDefault("names", "", sendResponse);
-                return true;
-
-            case "set_names":
-                set("names", request.names);
+            case "set":
+                chrome.storage.local.set(request.data);
                 return true;
 
             case "reload":
@@ -46,7 +25,7 @@ chrome.runtime.onMessage.addListener(
                 }
 
             default:
-                throw new Error(`Unknown action: ${request}`);
+                throw new Error("Unknown action: " + request.action);
         }
     },
 );
