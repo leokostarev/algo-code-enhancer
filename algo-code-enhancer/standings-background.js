@@ -70,10 +70,10 @@ function enhanceStandings(numOfInfoRows, standings) {
     const taskRow = tableBody.rows[1];
     const headTaskRow = tableHead.rows[1];
 
-    const numOfTasks = taskRow.cells.length - 1;
+    const numOfTasks = taskRow.cells.length;
     // подсчитаем количество успешных решений
     const counter = Array(numOfTasks).fill(0);
-    for (let row_i = 2; row_i < tableBody.rows.length - 1; row_i++) {
+    for (let row_i = 2; row_i < tableBody.rows.length; row_i++) {
         const row = tableBody.rows[row_i];
 
         for (let column_i = 0; column_i < numOfTasks; column_i++) {
@@ -90,11 +90,14 @@ function enhanceStandings(numOfInfoRows, standings) {
     function populateCountRow(row) {
         // вводим данные в таблицу
         for (let column_i = 0; column_i < numOfTasks; column_i++) {
-            if (row.cells[column_i].textContent === "Σ")
+            const cell = row.cells[column_i];
+
+            if (cell.textContent === "Σ" || cell.textContent === "Mark") {
                 continue;
-            row.cells[column_i].textContent = counter[column_i];
-            row.cells[column_i].style.color = "green";
-            row.cells[column_i].style.fontWeight = "bold";
+            }
+            cell.textContent = counter[column_i];
+            cell.style.color = "green";
+            cell.style.fontWeight = "bold";
         }
     }
 }

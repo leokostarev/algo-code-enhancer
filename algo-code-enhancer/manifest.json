@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "version": "1.3.0",
+  "version": "1.4.0",
   "name": "Algocode Enhancer",
   "description": "Enhance algocode with new features",
   "author": "RedON",
@@ -34,7 +34,8 @@
   "content_scripts": [
     {
       "matches": [
-        "https://ejudge.algocode.ru/*"
+        "https://ejudge.algocode.ru/*",
+        "https://ejudge.algocourses.ru/*"
       ],
       "js": [
         "ejudge-background.js"
@@ -46,7 +47,8 @@
     },
     {
       "matches": [
-        "https://algocode.ru/standings/*"
+        "https://algocode.ru/standings/*",
+        "https://algocourses.ru/standings/*"
       ],
       "js": [
         "standings-background.js"

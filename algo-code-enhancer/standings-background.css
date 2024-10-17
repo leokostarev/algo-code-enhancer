@@ -1,5 +1,13 @@
 .highlight-row {
-    border-bottom: black 2px dashed;
-    border-top: black 2px dashed;
+    border-bottom: var(--highlight-color) 2px dashed;
+    border-top: var(--highlight-color) 2px dashed;
+}
 
+/* integration with darkreader extension */
+html[data-darkreader-scheme="dark"] {
+    --highlight-color: darkgray;
+}
+
+html:not([data-darkreader-scheme="dark"]) {
+    --highlight-color: black;
 }
