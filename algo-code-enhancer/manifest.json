@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "version": "1.4.0",
-  "name": "Algocode Enhancer",
-  "description": "Enhance algocode with new features",
+  "name": "Algocode&courses Enhancer",
+  "description": "Enhance algocode and algocourses with new features",
   "author": "RedON",
   "permissions": [
     "clipboardRead",
@@ -13,7 +13,7 @@
     "default_icon": {
       "128": "128.png"
     },
-    "default_title": "Algocode Enhancer",
+    "default_title": "Algocode&courses Enhancer",
     "default_popup": "popup.html"
   },
   "background": {

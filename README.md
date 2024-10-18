@@ -1,4 +1,4 @@
-# Algocode Enhancer
+# Algocode&courses Enhancer
 
 
 An extension that improves the user experience of algocode.ru & ejudge.algocode.ru and algocourses.
