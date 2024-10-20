@@ -1,6 +1,6 @@
 # Algocode&courses Enhancer
 
-[Для chrome, яндекса и почти всех других браузеров](https://chromewebstore.google.com/detail/algocodecourses-enhancer/mecoflldkcjmaebngkideminfppempje)
+[Для chrome, яндекса и почти всех других браузеров](https://chromewebstore.google.com/detail/algocodecourses-enhancer/mecoflldkcjmaebngkideminfppempje)  
 [Для firefox](https://addons.mozilla.org/ru/firefox/addon/algocode-enhancer/)
 
 An extension that improves the user experience of algocode.ru & ejudge.algocode.ru and algocourses.
