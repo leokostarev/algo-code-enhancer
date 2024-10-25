@@ -20,7 +20,7 @@ chrome.runtime.onMessage.addListener(
                 try {
                     chrome.tabs.reload(sender.tab.id);
                     return true;
-                } catch (e) {
+                } catch {
                     return false;
                 }
 

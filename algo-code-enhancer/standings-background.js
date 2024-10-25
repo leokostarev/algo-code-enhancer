@@ -170,10 +170,15 @@ function sortStandingsBy(tableBody, compareFunction) {
  * @param {string} names
  * @returns {HTMLTableRowElement[]} */
 function getMatchingRows(standings, names) {
+    // удаляем все пробелы в именах, это необходимо в редких случаях
+    names = names.replace(/\s/g, "");
     const rows = standings.tBodies[0].rows;
     const matchingRows = [];
     for (const row of rows) {
-        if (row.cells.length > 2 && names.includes(row.cells[2].textContent)) {
+        if (row.cells.length <= 2) {
+            continue;
+        }
+        if (names.includes(row.cells[2].textContent.replace(/\s/g, ""))) {
             matchingRows.push(row);
         }
     }
