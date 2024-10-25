@@ -1,7 +1,7 @@
 /**
  *  @return {Promise<[HTMLElement, HTMLElement]>}
  */
-async function waitForStandingsToLoad() {
+async function loadStandings() {
     async function waitIfNotLoaded(el) {
         if (el === null || el.children.length === 0) {
             await new Promise(resolve => setTimeout(resolve, 200));
@@ -77,7 +77,8 @@ function enhanceStandings(numOfInfoRows, standings) {
         const row = tableBody.rows[row_i];
 
         for (let column_i = 0; column_i < numOfTasks; column_i++) {
-            if (row.cells[column_i + numOfInfoRows].classList.contains("ok")) {
+            const cell = row.cells[column_i + numOfInfoRows];
+            if (cell.classList.contains("ok") || cell.textContent === "100") {
                 counter[column_i]++;
             }
         }
@@ -174,7 +175,8 @@ function getMatchingRows(standings, names) {
     names = names.replace(/\s/g, "");
     const rows = standings.tBodies[0].rows;
     const matchingRows = [];
-    for (const row of rows) {
+    for (let row_i = 3; row_i < rows.length; row_i++) {
+        const row = rows[row_i];
         if (row.cells.length <= 2) {
             continue;
         }
@@ -196,22 +198,31 @@ function colorTasks(numOfInfoRows, standings, userRow) {
     const taskRow2 = standings.tHead.rows[1];
     const numOfTasks = taskRow.cells.length;
 
-    for (let i = 0; i < numOfTasks; i++) {
-        const style = userRow.cells[i + numOfInfoRows].classList[0];
+    // таблица с подгруппами
+    const isWeightedMode = userRow.cells[numOfInfoRows].style.backgroundColor.length > 10;
 
-        taskRow.cells[i].classList.remove("gray");
-        taskRow.cells[i].classList.add(style);
-        taskRow2.cells[i].classList.remove("gray");
-        taskRow2.cells[i].classList.add(style);
+    for (let i = 0; i < numOfTasks; i++) {
+        if (!isWeightedMode) {
+            const style = userRow.cells[i + numOfInfoRows].classList[0];
+            taskRow.cells[i].classList.remove("gray");
+            taskRow.cells[i].classList.add(style);
+            taskRow2.cells[i].classList.remove("gray");
+            taskRow2.cells[i].classList.add(style);
+        } else {
+            const style = userRow.cells[i + numOfInfoRows].style.backgroundColor;
+            taskRow.cells[i].style.backgroundColor = style;
+            taskRow2.cells[i].style.backgroundColor = style;
+        }
     }
 }
 
 async function main() {
-    const [standingsFixed, standings] = await waitForStandingsToLoad();
+    const [standingsFixed, standings] = await loadStandings();
 
     const numOfInfoRows = getNumOfInfoRows(standingsFixed);
     enhanceFixedStandings(numOfInfoRows, standingsFixed);
     enhanceStandings(numOfInfoRows, standings);
+
     const response = await chrome.runtime.sendMessage({action: "get"});
 
     const userRow = getMatchingRows(standings, response.names);
