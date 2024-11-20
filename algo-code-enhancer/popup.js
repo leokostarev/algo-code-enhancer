@@ -1,34 +1,44 @@
-const refresh_checkbox = document.getElementById("refresh");
-const refresh_time_input = document.getElementById("refresh_time");
-const names_input = document.getElementById("names");
-const friends_input = document.getElementById("friends");
+const refreshCheckboxElement = document.getElementById("refresh");
+const refreshTimeInputElement = document.getElementById("refresh_time");
+const namesInputElement = document.getElementById("names");
+const friendsInputElement = document.getElementById("friends");
+const saveButtonElement = document.getElementById("save_button");
 
 chrome.runtime
     .sendMessage({action: "get"})
     .then(response => {
-            refresh_checkbox.checked = response.refresh;
-            refresh_time_input.value = response.refresh_time;
-            names_input.value = response.names;
-            friends_input.value = response.friends;
-        },
-    );
+        refreshCheckboxElement.checked = response.refresh;
+        refreshTimeInputElement.value = response.refreshTime;
+        namesInputElement.value = response.names;
+        friendsInputElement.value = response.friends;
+    });
 
-refresh_checkbox.onchange = () => chrome.runtime.sendMessage({
+refreshCheckboxElement.onchange = () => chrome.runtime.sendMessage({
     action: "set",
-    data:   {refresh: refresh_checkbox.checked},
+    data:   {refresh: refreshCheckboxElement.checked},
 });
 
-refresh_time_input.onchange = () => chrome.runtime.sendMessage({
+refreshTimeInputElement.onchange = () => chrome.runtime.sendMessage({
     action: "set",
-    data:   {refresh_time: refresh_time_input.value},
+    data:   {refreshTime: refreshTimeInputElement.value},
 });
 
-names_input.onchange = () => chrome.runtime.sendMessage({
+namesInputElement.onchange = () => chrome.runtime.sendMessage({
     action: "set",
-    data:   {names: names_input.value},
+    data:   {names: namesInputElement.value},
 });
 
-friends_input.onchange = () => chrome.runtime.sendMessage({
+friendsInputElement.onchange = () => chrome.runtime.sendMessage({
     action: "set",
-    data:   {friends: friends_input.value},
+    data:   {friends: friendsInputElement.value},
+});
+
+saveButtonElement.onclick = () => chrome.runtime.sendMessage({
+    action: "set",
+    data:   {
+        refresh:     refreshCheckboxElement.checked,
+        refreshTime: refreshTimeInputElement.value,
+        names:       namesInputElement.value,
+        friends:     friendsInputElement.value,
+    },
 });

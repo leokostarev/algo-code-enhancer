@@ -1,6 +1,6 @@
 const FIELDS = {
     refresh:      false,
-    refresh_time: 200,
+    refreshTime: 200,
     names:        "",
     friends:      "",
 };

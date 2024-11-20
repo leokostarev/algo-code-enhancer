@@ -19,7 +19,7 @@ async function reloadIfNecessary() {
 
     setTimeout(
         () => chrome.runtime.sendMessage({action: "reload"}),
-        response.refresh_time,
+        response.refreshTime,
     );
 }
 
