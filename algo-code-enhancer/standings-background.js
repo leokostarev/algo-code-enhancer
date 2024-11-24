@@ -19,7 +19,7 @@ async function loadStandings() {
         standings = document.getElementById("standings");
     }
 
-    return [standingsFixed, standings];
+    return [standings, standingsFixed];
 }
 
 
@@ -27,16 +27,16 @@ async function loadStandings() {
  * @param {HTMLTableElement} standingsFixed
  * @returns {number}
  */
-function getNumOfInfoRows(standingsFixed) {
+function getNumOfInfoCols(standingsFixed) {
     return standingsFixed.tBodies[0].rows[0].cells.length - 1;
 }
 
 
 /**
- * @param {number} numOfInfoRows
+ * @param {number} numOfInfoCols
  * @param {HTMLTableElement} standingsFixed
  */
-function enhanceFixedStandings(numOfInfoRows, standingsFixed) {
+function enhanceFixedStandings(numOfInfoCols, standingsFixed) {
     // настраиваем таблицу для боковой панели
     const tableBody = standingsFixed.tBodies[0];
 
@@ -45,24 +45,24 @@ function enhanceFixedStandings(numOfInfoRows, standingsFixed) {
 
     spaceRow.insertAdjacentElement("afterend", spaceRow.cloneNode(true));
 
-    for (let i = 0; i < numOfInfoRows; i++) {
+    for (let i = 0; i < numOfInfoCols; i++) {
         headRow.cells[i].rowSpan = 3;
     }
 }
 
 
 /**
- * @param {number} numOfInfoRows
+ * @param {number} numOfInfoCols
  * @param {HTMLTableElement} standings
  */
-function enhanceStandings(numOfInfoRows, standings) {
+function enhanceStandings(numOfInfoCols, standings) {
     // настраиваем таблицу для основной части
     const tableBody = standings.tBodies[0];
     const tableHead = standings.tHead;
 
     const headRow = tableBody.rows[0];
     const headHeadRow = tableHead.rows[0];
-    for (let i = 0; i < numOfInfoRows; i++) {
+    for (let i = 0; i < numOfInfoCols; i++) {
         headRow.cells[i].rowSpan = 3;
         headHeadRow.cells[i].rowSpan = 3;
     }
@@ -77,7 +77,7 @@ function enhanceStandings(numOfInfoRows, standings) {
         const row = tableBody.rows[row_i];
 
         for (let column_i = 0; column_i < numOfTasks; column_i++) {
-            const cell = row.cells[column_i + numOfInfoRows];
+            const cell = row.cells[column_i + numOfInfoCols];
             if (cell.classList.contains("ok") || cell.textContent === "100") {
                 counter[column_i]++;
             }
@@ -151,8 +151,10 @@ function configureSortButtons(standingsFixed, standings) {
     };
 }
 
-/** @param {HTMLTableSectionElement} tableBody
- * @param { (a: HTMLTableRowElement, b: HTMLTableRowElement) => number} compareFunction */
+/**
+ * @param {HTMLTableSectionElement} tableBody
+ * @param { (a: HTMLTableRowElement, b: HTMLTableRowElement) => number} compareFunction
+ */
 function sortStandingsBy(tableBody, compareFunction) {
     // выбираем все строки с данными
     const dataRows = Array.from(tableBody.rows).slice(3);
@@ -167,9 +169,11 @@ function sortStandingsBy(tableBody, compareFunction) {
     dataRows.forEach(x => tableBody.appendChild(x));
 }
 
-/** @param {HTMLTableElement} standings
+/**
+ * @param {HTMLTableElement} standings
  * @param {string} names
- * @returns {HTMLTableRowElement[]} */
+ * @returns {HTMLTableRowElement[]}
+ */
 function getMatchingRows(standings, names) {
     // удаляем все пробелы в именах, это необходимо в редких случаях
     names = names.replace(/\s/g, "");
@@ -187,41 +191,97 @@ function getMatchingRows(standings, names) {
     return matchingRows;
 }
 
-function highlightRows(matchedRows) {
-    matchedRows.forEach(
-        row => row.classList.add("highlight-row"),
-    );
+/**
+ * @param {HTMLTableRowElement[]} rows - An array of table rows to be highlighted.
+ */
+function highlightRows(rows) {
+    for (const row of rows) {
+        row.classList.add("highlight-row");
+    }
 }
 
-function colorTasks(numOfInfoRows, standings, userRow) {
+/**
+ * @param {HTMLTableRowElement} row
+ */
+function underlineRow(row) {
+    row.classList.add("underline-row");
+}
+
+/**
+ * @param numOfInfoCols {number}
+ * @param standings {HTMLTableElement}
+ * @param userRow {HTMLTableRowElement}
+ */
+function colorTasks(numOfInfoCols, standings, userRow) {
     const taskRow = standings.tBodies[0].rows[1];
     const taskRow2 = standings.tHead.rows[1];
     const numOfTasks = taskRow.cells.length;
 
     // таблица с подгруппами
-    const isWeightedMode = userRow.cells[numOfInfoRows].style.backgroundColor.length > 10;
+    const isWeightedMode = userRow.cells[numOfInfoCols].style.backgroundColor.length > 10;
 
     for (let i = 0; i < numOfTasks; i++) {
         if (!isWeightedMode) {
-            const style = userRow.cells[i + numOfInfoRows].classList[0];
+            const style = userRow.cells[i + numOfInfoCols].classList[0];
             taskRow.cells[i].classList.remove("gray");
             taskRow.cells[i].classList.add(style);
             taskRow2.cells[i].classList.remove("gray");
             taskRow2.cells[i].classList.add(style);
         } else {
-            const style = userRow.cells[i + numOfInfoRows].style.backgroundColor;
+            const style = userRow.cells[i + numOfInfoCols].style.backgroundColor;
             taskRow.cells[i].style.backgroundColor = style;
             taskRow2.cells[i].style.backgroundColor = style;
         }
     }
 }
 
-async function main() {
-    const [standingsFixed, standings] = await loadStandings();
+/**
+ * @param {HTMLTableElement} standings
+ * @param {HTMLTableRowElement[]} rows
+ * @param {string} mode
+ */
+function moveRowsUp(standings, rows, mode) {
+    if (mode === "no") return;
 
-    const numOfInfoRows = getNumOfInfoRows(standingsFixed);
-    enhanceFixedStandings(numOfInfoRows, standingsFixed);
-    enhanceStandings(numOfInfoRows, standings);
+    const body = standings.tBodies[0];
+    const doRemove = mode === "move";
+    let lastRow = null;
+    let index = 3;
+    for (const row of rows) {
+        body.replaceChild(
+            lastRow = doRemove
+                ? body.removeChild(row)
+                : row.cloneNode(true),
+            body.insertRow(index),
+        );
+        index++;
+    }
+
+    if (lastRow) {
+        underlineRow(lastRow);
+    }
+}
+
+/**
+ * @param {HTMLTableRowElement[]} rows
+ * @returns {HTMLTableRowElement[]}
+ */
+function dedupRows(rows) {
+    let map = new Map();
+    for (let i of rows) {
+        map.set(i.cells[0].textContent, i);
+    }
+    return Array
+        .from(map.values())
+        .toSorted((a, b) => a.cells[0].textContent - b.cells[0].textContent);
+}
+
+async function main() {
+    const [standings, standingsFixed] = await loadStandings();
+
+    const numOfInfoCols = getNumOfInfoCols(standingsFixed);
+    enhanceStandings(numOfInfoCols, standings);
+    enhanceFixedStandings(numOfInfoCols, standingsFixed);
 
     const response = await chrome.runtime.sendMessage({action: "get"});
 
@@ -229,15 +289,22 @@ async function main() {
     const userRowFixed = getMatchingRows(standingsFixed, response.names);
     const friendsRows = getMatchingRows(standings, response.friends);
     const friendsRowsFixed = getMatchingRows(standingsFixed, response.friends);
-    highlightRows([...new Set([
-        ...userRow, ...friendsRows,
-        ...userRowFixed, ...friendsRowsFixed,
-    ])]); // holy hell
-    if (userRow.length > 0) {
-        colorTasks(numOfInfoRows, standings, userRow[0]);
+
+    const dedupedRows = dedupRows([...userRow, ...friendsRows]);
+    const dedupedRowsFixed = dedupRows([...userRowFixed, ...friendsRowsFixed]);
+
+    moveRowsUp(standings, dedupedRows, response.move);
+    moveRowsUp(standingsFixed, dedupedRowsFixed, response.move);
+    if (response.move !== "move") {
+        highlightRows(dedupedRows);
+        highlightRows(dedupedRowsFixed);
     }
 
-    // добавляю сортировку в конце, чтобы логику нельзя было сломать
+    if (userRow.length > 0) {
+        colorTasks(numOfInfoCols, standings, userRow[0]);
+    }
+
+    // добавляю сортировки в конце, чтобы логику нельзя было сломать
     configureSortButtons(standingsFixed, standings);
 }
 

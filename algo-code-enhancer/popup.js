@@ -2,6 +2,7 @@ const refreshCheckboxElement = document.getElementById("refresh");
 const refreshTimeInputElement = document.getElementById("refresh_time");
 const namesInputElement = document.getElementById("names");
 const friendsInputElement = document.getElementById("friends");
+const moveSelectElement = document.getElementById("move");
 const saveButtonElement = document.getElementById("save_button");
 
 chrome.runtime
@@ -11,6 +12,7 @@ chrome.runtime
         refreshTimeInputElement.value = response.refreshTime;
         namesInputElement.value = response.names;
         friendsInputElement.value = response.friends;
+        moveSelectElement.value = response.move;
     });
 
 refreshCheckboxElement.onchange = () => chrome.runtime.sendMessage({
@@ -33,6 +35,11 @@ friendsInputElement.onchange = () => chrome.runtime.sendMessage({
     data:   {friends: friendsInputElement.value},
 });
 
+moveSelectElement.onchange = () => chrome.runtime.sendMessage({
+    action: "set",
+    data:   {move: moveSelectElement.value},
+});
+
 saveButtonElement.onclick = () => chrome.runtime.sendMessage({
     action: "set",
     data:   {
@@ -40,5 +47,6 @@ saveButtonElement.onclick = () => chrome.runtime.sendMessage({
         refreshTime: refreshTimeInputElement.value,
         names:       namesInputElement.value,
         friends:     friendsInputElement.value,
+        move:        moveSelectElement.value,
     },
 });

@@ -3,6 +3,10 @@
     border-top: var(--highlight-color) 2px dashed;
 }
 
+.underline-row {
+    border-bottom: var(--highlight-color) 2px solid;
+}
+
 /* integration with darkreader extension */
 html[data-darkreader-scheme="dark"] {
     --highlight-color: darkgray;

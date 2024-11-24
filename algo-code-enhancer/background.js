@@ -1,8 +1,9 @@
 const FIELDS = {
-    refresh:      false,
+    refresh:     false,
     refreshTime: 200,
-    names:        "",
-    friends:      "",
+    names:       "",
+    friends:     "",
+    move:        "no",
 };
 
 chrome.runtime.onMessage.addListener(
